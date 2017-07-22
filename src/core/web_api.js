@@ -47,7 +47,11 @@ class Auth0WebAPI {
   }
 
   startPasswordless(lockID, options, cb) {
-    this.clients[lockID].startPasswordless(options, cb);
+    this.clients[lockID].client.passwordlessStart(options, cb);
+  }
+
+  passwordlessVerify(lockID, options, cb) {
+    this.clients[lockID].client.passwordlessVerify(options, cb);
   }
 
   parseHash(lockID, hash = '', cb) {

@@ -67,6 +67,7 @@ function resendEmailError(id, error) {
 
 function sendEmail(m, successFn, errorFn) {
   const params = {
+    connection: 'email',
     email: c.getFieldValue(m, 'email'),
     send: send(m)
   };
@@ -86,7 +87,11 @@ function sendEmail(m, successFn, errorFn) {
 
 export function sendSMS(id) {
   validateAndSubmit(id, ['phoneNumber'], m => {
-    const params = { phoneNumber: phoneNumberWithDiallingCode(m) };
+    const params = {
+      connection: 'sms',
+      phoneNumber: phoneNumberWithDiallingCode(m),
+      send: send(m)
+    };
     webApi.startPasswordless(id, params, error => {
       if (error) {
         setTimeout(() => sendSMSError(id, error), 250);
@@ -112,15 +117,22 @@ export function sendSMSError(id, error) {
 }
 
 export function logIn(id) {
+  //todo: set submitting
   const m = read(getEntity, 'lock', id);
-  const params = { passcode: c.getFieldValue(m, 'vcode') };
+  const params = { verificationCode: c.getFieldValue(m, 'vcode') };
   if (isEmail(m)) {
+    params.connection = 'email';
     params.email = c.getFieldValue(m, 'email');
   } else {
+    params.connection = 'sms';
     params.phoneNumber = phoneNumberWithDiallingCode(m);
   }
-
-  coreLogIn(id, ['vcode'], params);
+  webApi.passwordlessVerify(id, params, error => {
+    //todo handle erro
+    if (error) {
+      console.log(error);
+    }
+  });
 }
 
 export function restart(id) {

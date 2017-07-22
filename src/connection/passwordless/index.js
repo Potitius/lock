@@ -93,14 +93,17 @@ export function passwordlessStarted(m) {
 }
 
 export function passwordlessConnection(m) {
+  //todo: set passwordlessConnection somewhere else so we can actually
+  //choose which between sms or email in the `show` call
   return (
-    l.connections(m, 'passwordless', 'email').get(0) ||
     l.connections(m, 'passwordless', 'sms').get(0) ||
+    l.connections(m, 'passwordless', 'email').get(0) ||
     new Map()
   );
 }
 
 export function isEmail(m) {
   const c = passwordlessConnection(m);
+  console.log(c.toJS());
   return c.isEmpty() ? undefined : c.get('strategy') === 'email';
 }

@@ -87,6 +87,10 @@ class Auth0LegacyAPIClient {
     this.client.startPasswordless(options, err => cb(normalizeError(err)));
   }
 
+  passwordlessVerify(lockID, options, cb) {
+    this.client.passwordlessVerify(options, err => cb(normalizeError(err)));
+  }
+
   // for legacy, we should not verify the id_token so we reimplemented it here
   // to avoid adding dirt into auth0.js. At some point we will get rid of this.
   parseHash(hash = '', cb) {
@@ -189,7 +193,7 @@ class Auth0LegacyAPIClient {
   }
 
   getUserCountry(cb) {
-    return this.client.getUserCountry(cb);
+    return this.client.client.getUserCountry(cb);
   }
 }
 
